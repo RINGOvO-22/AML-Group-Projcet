@@ -31,6 +31,7 @@ Data sources:
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from scipy.spatial import ConvexHull
 
 # loading training data    
 data = np.load('species_train.npz')
@@ -58,6 +59,7 @@ unique_species, species_counts = np.unique(train_ids, return_counts=True)
 print('Average number of locations per species:  ', species_counts.mean())
 print('Minimum number of locations for a species:', species_counts.min())
 print('Maximum number of locations for a species:', species_counts.max())
+
 
 def random_dpecies(species, species_names, test_pos_inds, test_locs, train_ids, train_locs):
   # plot train and test data for a random species
@@ -104,7 +106,50 @@ def all_loc(train_locs):
   plt.savefig('.\\figure\\all_training_locations.png', dpi=300)  # 保存为PNG文件，dpi为300
   plt.show()
 
-def topN_botM(unique_species, species_counts):
+def all_loc_heatmap(train_locs):
+  # 绘制热力图
+  plt.figure(figsize=(12, 6))
+  plt.hist2d(train_locs[:, 1], train_locs[:, 0], bins=100, cmap='hot')  # 设置合适的bin数量和颜色映射
+
+  # 添加颜色栏
+  plt.colorbar(label='Location Density')
+
+  # 图形美化
+  plt.title('Heatmap of All Training Locations')
+  plt.xlabel('Longitude')
+  plt.ylabel('Latitude')
+  plt.grid(False)  # 去除网格以便更好地查看热力图
+  plt.tight_layout()
+
+  # 保存图形
+  plt.savefig('.\\figure\\all_training_locations_heatmap.png', dpi=300)
+  plt.show()
+
+def species_count_distribution(unique_species, species_counts):
+  # 定义区间 (例如每100个样本作为一个区间)
+  bins = np.arange(0, 2100, 100)  # 区间：[0, 100), [100, 200), ..., [2000, 2100)
+
+  # 使用 numpy.histogram 计算每个区间内的物种数量
+  hist_counts, bin_edges = np.histogram(species_counts, bins=bins)
+
+  # 绘制柱状图
+  plt.figure(figsize=(10, 6))
+  plt.bar(bin_edges[:-1], hist_counts, width=100, align='edge', color='skyblue', edgecolor='black')
+
+  # 添加标题和坐标轴标签
+  plt.title('Species Count Distribution by Sample Range')
+  plt.xlabel('Sample Count Range')
+  plt.ylabel('Number of Species')
+
+  # 显示区间标签
+  plt.xticks(bins, rotation=45)
+
+  # 保存并显示图形
+  plt.tight_layout()
+  plt.savefig('.\\figure\\species_count_distribution.png', dpi=300)
+  plt.show()
+
+def species_count_topN_botM(unique_species, species_counts):
   # 设定前 n 名和后 m 名
   n = 65  # 前 n 名
   m = 10  # 后 m 名
@@ -143,8 +188,9 @@ def topN_botM(unique_species, species_counts):
   plt.xlabel('Longitude')
   plt.ylabel('Latitude')
   # plt.legend()
+  plt.grid(True)
   plt.tight_layout()
-  plt.savefig('.\\figure\\topN_Loc.png', dpi=300)
+  plt.savefig('.\\figure\\species_count_topN_Loc.png', dpi=300)
   plt.show()
 
   # 绘制后 m 名的物种位置
@@ -158,11 +204,78 @@ def topN_botM(unique_species, species_counts):
   plt.xlabel('Longitude')
   plt.ylabel('Latitude')
   # plt.legend()
+  plt.grid(True)
   plt.tight_layout()
-  plt.savefig('.\\figure\\bottomM_loc.png', dpi=300)
+  plt.savefig('.\\figure\\species_count_bottomM_loc.png', dpi=300)
+  plt.show()
+
+# 计算每个物种的最小凸包面积
+def convex_hull_area(locs):
+    if locs.shape[0] < 3:
+        return 0  # 若点数少于3，无法形成凸包
+    hull = ConvexHull(locs)
+    return hull.volume  # 面积
+
+def plot_convex_hull_boxplot(dispersions):
+    areas = list(dispersions.values())  # 所有物种的凸包面积
+
+    # 创建箱线图
+    plt.figure(figsize=(10, 6))
+    plt.boxplot(areas, vert=False, patch_artist=True, boxprops=dict(facecolor='skyblue', color='blue'))
+    plt.title('Box Plot of Convex Hull Areas Across All Species')
+    plt.xlabel('Convex Hull Area')
+    plt.grid(True)
+
+    # 保存并显示
+    plt.tight_layout()
+    plt.savefig('.\\figure\\species_convex_hull_area_boxplot.png', dpi=300)
+    plt.show()
+
+def dispersions_convex_hull_area(species, train_locs, train_ids):
+  # 计算每个物种的凸包面积
+  dispersions = {species: convex_hull_area(train_locs[train_ids == species]) for species in unique_species}
+  plot_convex_hull_boxplot(dispersions)
+
+  # 按凸包面积排序
+  sorted_dispersions = sorted(dispersions.items(), key=lambda x: x[1], reverse=True)
+
+  # 设定绘图显示的数量
+  top_n = 5  # 最大凸包面积的前 n 名
+  bottom_m = 5  # 最小凸包面积的后 m 名
+  top_species = sorted_dispersions[:top_n]
+  bottom_species = sorted_dispersions[-bottom_m:]
+
+  # 绘制最大和最小凸包面积的物种地理分布
+  fig, axes = plt.subplots(2, 1, figsize=(12, 10))
+
+  # 绘制凸包面积最大的前 n 个物种
+  axes[0].set_title(f'Top {top_n} Species with Largest Convex Hull Area')
+  for species, area in top_species:
+      species_locs = train_locs[train_ids == species]
+      axes[0].scatter(species_locs[:, 1], species_locs[:, 0], label=f'Species ID {species} (Area: {area:.2f})')
+  axes[0].grid(True)
+
+  # 绘制凸包面积最小的后 m 个物种
+  axes[1].set_title(f'Bottom {bottom_m} Species with Smallest Convex Hull Area')
+  for species, area in bottom_species:
+      species_locs = train_locs[train_ids == species]
+      axes[1].scatter(species_locs[:, 1], species_locs[:, 0], label=f'Species ID {species} (Area: {area:.2f})')
+  axes[1].grid(True)
+
+  # 图形美化
+  for ax in axes:
+      ax.set_xlabel('Longitude')
+      ax.set_ylabel('Latitude')
+      ax.legend(loc='best')
+  plt.tight_layout()
+  plt.savefig('.\\figure\\dispersions_convex_hull_area.png', dpi=300)
   plt.show()
 
 # main body
+
 # random_dpecies(species, species_names, test_pos_inds, test_locs, train_ids, train_locs)
-all_loc(train_locs)
-# topN_botM(unique_species, species_counts)
+# all_loc(train_locs)
+# all_loc_heatmap(train_locs)
+# species_count_distribution(unique_species, species_counts)
+# species_count_topN_botM(unique_species, species_counts)
+dispersions_convex_hull_area(species, train_locs, train_ids)

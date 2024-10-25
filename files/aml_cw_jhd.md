@@ -1,12 +1,12 @@
-## Before meeing 3
+# Before meeing 3
 
 > 2024/10/25
 
 
 
-### Exploratory Data Analysis
+## Exploratory Data Analysis
 
-#### 1) data
+### 1) Data
 
 * **species_train**: 
   * train_locs: (272073, 2)
@@ -29,16 +29,43 @@
 
 
 
-#### 2) topN_botM
+### 2) all_loc
+
+不分物种, 二维坐标.
 
 
 
-####  打算：
+### 3) all_loc_heatmap
 
-* 找 loc 数量最多的几个物种
-  * 同理，最少的
-* 分布图（无差别 plot 坐标）
-* 可能：箱线图，同类物种的 noise location
+不分物种, 二维坐标, 热力图.
 
 
 
+### 4) species_count_distribution
+
+不同物种样本数量分布柱状图.
+
+
+
+### 5) species_count_topN_botM
+
+不同物种样本数量排序. 最多和最少的物种的分布图(散点).
+
+* n = 65 (基本都是2000)
+* m = 5
+
+
+
+### 6) dispersions_convex_hull_area
+
+> 最小凸包面积(Minimum Convex Hull Area)
+
+```python
+from scipy.spatial import ConvexHull
+```
+
+5 个最大和 5 个最小的物种的分布图 (散点), 及箱线图
+
+* `convex_hull_area(locs)`
+* `dispersions_convex_hull_area`
+* `plot_convex_hull_boxplot`
