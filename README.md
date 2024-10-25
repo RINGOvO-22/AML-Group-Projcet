@@ -1,3 +1,9 @@
+# Result
+
+EDA：./figure
+
+
+
 # Before meeing 3
 
 > 2024/10/25
