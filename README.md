@@ -1,6 +1,6 @@
 # Result
 
-EDA(24/10/25)：[<here>](./figure)
+EDA(24/10/25)：[here](./figure)
 
 
 
