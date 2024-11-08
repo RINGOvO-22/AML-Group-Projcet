@@ -133,7 +133,30 @@ citation:
 * Minimum Convex Hull Area (boxplot): 
 
 ```latex
-We utilise some exploratory data anaylsis methods to help us better understanding the data.
+We utilise some exploratory data analysis methods to help us better understanding the data. Only training data is analysed in this section.
+
+Figure 1 plots all sample points in the form of scatter plots. As the basic data set are in the form of a simple 2-dimensional geographic feature, we can thus intuitively feel the geographical distribution of the species sample in general this way. Comparing it with the layout of the world continents, we can found that almost all of the samples were collected on the mainland or on small islands, with only a small number coming from the ocean. Few samples came from Antarctica or Greenland. This conclusion is also supported by the figure 2. Furthermore, as a heat-map, figure 2 also demonstrate the density of the data in different area and its location. Especially for the northwestern part of North America and the southeastern part of Australia, they are the most intense area on the heat-map.
+
+The histogram in Figure 3 illustrates the distribution of the count of samples for each species. Among the 500 data points in the  training set, there are more than 60 of them, each of which has about 2000 data points instances that were observed. For most of the remaining species, there are only fewer than 800 samples in the dataset for each species.
+
+Convex Hull Algorithm is a commonly used method to measure sparsity, spread, or distribution trend of data in Geographic Information System according to Alkathiri et al. (2016)\cite{alkathiri2016geo}. Given the set of locations on a two-dim plane, the convex hull is the smallest convex polygon that encloses these points. We apply this algorithm to each species and generate box plot, where each point indicates the convex hull area of one particular species, to compare the sample distribution between various species which is presented in figure \ref{fig:species_convex_hull_area_boxplot}. The two black bars represent the 'minimum' and 'maximum' value of the whole dataset respectively. And the left and right sides of the box indicates the data of the top quarter and the bottom quarter of the data. As for the orange bar in the middle, it is the median value. To analysis, for most of the species, their geographical distributions are not large zones with the area smaller than 2500. When it comes to the remaining points on the right hand side of the box, the largest convex hull area even approaches 25000, which is more than 10 times the maximum value of ordinary data in statistics.  We can infer that there is a small portion of all listed species widely distributed across the globe.
+
+```
+
+citation:
+
+```
+# convex hull
+@article{alkathiri2016geo,
+  title={Geo-spatial big data mining techniques},
+  author={Alkathiri, Mazin and Abdul, Jhummarwala and Potdar, MB},
+  journal={International Journal of Computer Applications},
+  volume={135},
+  number={11},
+  pages={28--36},
+  year={2016},
+  publisher={Foundation of Computer Science}
+}
 ```
 
 

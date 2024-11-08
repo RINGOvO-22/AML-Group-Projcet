@@ -1,0 +1,7 @@
+Metric,Value
+Micro Precision,0.175
+Micro Recall,0.655
+Micro F1-Score,0.276
+Macro Precision,0.449
+Macro Recall,0.75
+Macro F1-Score,0.477

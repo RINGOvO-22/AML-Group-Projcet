@@ -1,0 +1,20 @@
+Default params
+
+Metric,Value
+Micro Precision,0.11
+Micro Recall,0.613
+Micro F1-Score,0.187
+Macro Precision,0.397
+Macro Recall,0.753
+Macro F1-Score,0.415
+
+---
+Tuned params
+
+Metric,Value
+Micro Precision,0.276
+Micro Recall,0.608
+Micro F1-Score,0.379
+Macro Precision,0.559
+Macro Recall,0.727
+Macro F1-Score,0.553
