@@ -95,7 +95,6 @@ def all_loc(train_locs):
   plt.figure(figsize=(12, 6))
   plt.scatter(train_locs[:, 1], train_locs[:, 0], color='blue', alpha=0.5, s=10)  # s 控制点的大小
 
-  # 图形美化
   plt.title('All Training Locations')
   plt.xlabel('Longitude')
   plt.ylabel('Latitude')
@@ -114,29 +113,25 @@ def all_loc_heatmap(train_locs):
   # 添加颜色栏
   plt.colorbar(label='Location Density')
 
-  # 图形美化
   plt.title('Heatmap of All Training Locations')
   plt.xlabel('Longitude')
   plt.ylabel('Latitude')
   plt.grid(False)  # 去除网格以便更好地查看热力图
   plt.tight_layout()
 
-  # 保存图形
   plt.savefig('.\\figure\\all_training_locations_heatmap.png', dpi=300)
   plt.show()
 
 def species_count_distribution(unique_species, species_counts):
-  # 定义区间 (例如每100个样本作为一个区间)
+  # 定义区间 (每100个样本作为一个区间)
   bins = np.arange(0, 2100, 100)  # 区间：[0, 100), [100, 200), ..., [2000, 2100)
 
-  # 使用 numpy.histogram 计算每个区间内的物种数量
+  # 计算每个区间内的物种数量
   hist_counts, bin_edges = np.histogram(species_counts, bins=bins)
 
-  # 绘制柱状图
   plt.figure(figsize=(10, 6))
   plt.bar(bin_edges[:-1], hist_counts, width=100, align='edge', color='skyblue', edgecolor='black')
 
-  # 添加标题和坐标轴标签
   plt.title('Species Count Distribution by Sample Range')
   plt.xlabel('Sample Count Range')
   plt.ylabel('Number of Species')
@@ -144,13 +139,8 @@ def species_count_distribution(unique_species, species_counts):
   # 显示区间标签
   plt.xticks(bins, rotation=45)
 
-  # 保存并显示图形
   plt.tight_layout()
   plt.savefig('.\\figure\\species_count_distribution.png', dpi=300)
-  plt.show()
-
-def species_count_topN_botM(unique_species, species_counts):
-  # 设定前 n 名和后 m 名
   n = 65  # 前 n 名
   m = 10  # 后 m 名
 
@@ -183,7 +173,6 @@ def species_count_topN_botM(unique_species, species_counts):
       species_locs = train_locs[train_ids == species_id]  # 直接索引 train_locs
       plt.scatter(species_locs[:, 1], species_locs[:, 0], color=colors(idx), alpha=0.6, label=f'Species ID {species_id}')
 
-  # 图形美化
   plt.title('Top N Species Locations')
   plt.xlabel('Longitude')
   plt.ylabel('Latitude')
@@ -199,7 +188,6 @@ def species_count_topN_botM(unique_species, species_counts):
       species_locs = train_locs[train_ids == species_id]  # 直接索引 train_locs
       plt.scatter(species_locs[:, 1], species_locs[:, 0], color=colors_bot(idx), alpha=0.6, label=f'Species ID {species_id}')
 
-  # 图形美化
   plt.title('Bottom M Species Locations')
   plt.xlabel('Longitude')
   plt.ylabel('Latitude')
@@ -226,7 +214,6 @@ def plot_convex_hull_boxplot(dispersions):
     plt.xlabel('Convex Hull Area')
     plt.grid(True)
 
-    # 保存并显示
     plt.tight_layout()
     plt.savefig('.\\figure\\species_convex_hull_area_boxplot.png', dpi=300)
     plt.show()
@@ -262,7 +249,6 @@ def dispersions_convex_hull_area(species, train_locs, train_ids):
       axes[1].scatter(species_locs[:, 1], species_locs[:, 0], label=f'Species ID {species} (Area: {area:.2f})')
   axes[1].grid(True)
 
-  # 图形美化
   for ax in axes:
       ax.set_xlabel('Longitude')
       ax.set_ylabel('Latitude')
